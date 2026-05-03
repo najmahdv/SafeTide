@@ -115,7 +115,7 @@ Existing reporting apps are cold, form-based, and require internet. **SafeTide c
 
 ## 📱 Live Demo & Prototype
 
-**🎮 Interactive Demo:** Open `SafeTide_Portrait_Demo.html` → Try the full reporting flow (Chat → Voice Record → Submit → Earn Safe Points)
+**Interactive Demo HTML VERSION:** [file:///C:/Users/Najma%20Hayett%20De%20V/Downloads/SafeTide_Portrait_Demo%20(1).html]
 
 **🎨 Figma Prototype PDF:** [https://drive.google.com/file/d/1pzx4_0WXsNHAfRL96q0spmgIISNBNOG2/view?usp=sharing]
 
@@ -125,89 +125,6 @@ Existing reporting apps are cold, form-based, and require internet. **SafeTide c
 
 ---
 
-## 📸 Screenshots
-
-### Core User Flow
-
-| Welcome Screen                  | Crew Home (Wellness)             | Choose Mode                     |
-|--------------------------------|----------------------------------|---------------------------------|
-| ![Welcome](assets/screenshot-welcome.png) | ![Home](assets/screenshot-home.png) | ![Mode](assets/screenshot-mode.png) |
-
-| Voice Recording                 | Lautan AI Chat                   | Review & Submit                 |
-|--------------------------------|----------------------------------|---------------------------------|
-| ![Voice](assets/screenshot-voice.png) | ![Chat](assets/screenshot-chat.png) | ![Review](assets/screenshot-review.png) |
-
-### Advanced Features
-
-- **MMEA Authority Dashboard** — Real-time case queue, hotspot map, AI-generated legal briefs
-- **ESG Vessel Score** — 72/100 for MV Kencana Jaya (exportable for Bursa Malaysia & investors)
-- **Multi-Witness Network** — 3 anonymous witnesses with ZK-proof (legal strength: Strong)
-- **Live ASEAN Jurisdiction Map** — Real-time routing to MMEA + BAKAMLA + HTMS
-
-*(Add your own screenshots from Figma in `/assets/` folder)*
-
----
-
-## 🛠️ Tech Stack
-
-- **Frontend:** Pure HTML5 + Tailwind CSS + Vanilla JavaScript
-- **AI Layer:** Ollama (local LLM) + Hugging Face (emotion & speech models)
-- **Blockchain:** Polygon PoS (evidence anchoring)
-- **Encryption:** AES-256 + IPFS pinning
-- **Design Philosophy:** Behavioral Design + Human-Computer Interaction (HCI) + Cognitive Interviewing
-
----
-
-## 🚀 Getting Started (Local)
-
-This is a **single-file portfolio**. No build step required.
-
-```bash
-# Clone the repo
-git clone https://github.com/najmahayett/safetide-portfolio.git
-cd safetide-portfolio
-
-# Open in browser
-open index.html          # macOS
-start index.html         # Windows
-xdg-open index.html      # Linux
-```
-
-Or simply drag `index.html` into any modern browser.
-
----
-
-## 📁 Repository Structure
-
-```
-safetide-portfolio/
-├── index.html                 # Main portfolio (self-contained)
-├── README.md                  # You are here
-├── LICENSE
-├── /docs/
-│   ├── SAFETIDE-FINAL-PLAN.pdf
-│   ├── SafeTide-PROTOTYPE.pdf          # 30 high-fidelity screens
-│   └── Rencana-Karier-Global.pdf
-├── /assets/
-│   ├── logo-safetide.svg
-│   ├── pitch-video.mp4                 # Your original pitch video
-│   └── screenshots/                    # Figma exports
-└── .gitignore
-```
-
----
-
-## 🔗 Important Links
-
-| Resource                    | Link |
-|----------------------------|------|
-| **Live Portfolio**         | [GitHub Pages](https://najmahayett.github.io/safetide-portfolio) |
-| **Figma Prototype**        | [Add your link here] |
-| **Pitch Video**            | [Add your YouTube unlisted link here] |
-| **Full Documentation**     | `/docs/SAFETIDE-FINAL-PLAN.pdf` |
-| **30-Screen Prototype**    | `/docs/SafeTide-PROTOTYPE.pdf` |
-
----
 
 ## 👩‍💻 Author
 
@@ -216,6 +133,3 @@ Bachelor of Information Systems — Universitas Andalas (UNAND)
 
 *SafeTide — Because the ocean needs guardians who feel safe to speak.*
 
----
-
-*Last updated: May 2026*
