@@ -15,13 +15,11 @@
 
 Pada awal 2026, saya membuat **pitch video** yang menjadi fondasi lahirnya SafeTide. Berikut adalah **naskah lengkap pitch video tersebut** (dengan koreksi ejaan dan penyempurnaan bahasa):
 
-> **"Ketika kita berbicara tentang pencemaran laut, kita sering mengambil gambar plastik yang terapung di atas. Tapi kebenarannya jauh lebih menjijikkan.**  
-> Menurut Interpol, **pencemaran minyak ilegal dari kapal** merupakan pencemaran minyak yang lebih banyak daripada pencemaran minyak yang terjadi secara aksidental. Penyakit ekosistem ini berlaku di kawasan gelap, berjauhan dari pulau-pulau laut. Satu-satunya saksi yang benar untuk diserahkan adalah **awak kapal** yang berada di dalam peristiwa itu. Sebenarnya, data dari Departemen Keadilan AS menunjukkan bahwa lebih dari **75% kasus maritim yang berhasil dituntut bergantung secara seluruhnya pada whistleblower**.  Sistem legal ini sangat membutuhkan mereka, jadi mengapa mereka tetap diam? Jawabannya mudah: **ketakutan**.  Sekarang, aplikasi pelaporan maritim di luar negeri seperti EyeaSea sudah wujud. Mereka menggunakan fitur auto-detect untuk mengetahui tanda-tanda psikologi seperti plastik, botol, atau jaring untuk menjelaskan. Namun, mereka benar-benar **kurang empati**. **Itulah sebabnya saya menciptakan SafeTide.** Hal yang menjadikan SafeTide benar-benar berbeda adalah **integrasi AI psikologis / empathic AI**. Sementara sistem yang wujud berfokus pada perangkat keras atau data statis, saya menelusuri lautan biru dari **Behavioral Design**. SafeTide menggunakan model bahasa besar yang dispesialisasi dengan **persona empatik**. Ini adalah sistem pertama yang menggabungkan pendekatan behavioral dengan **cognitive interviewing** (teknik interogasi kognitif yang ramah).  Kita mulai dengan draft sederhana di sebuah kertas. Kita mulai dengan sebuah perangkat AI yang hangat dan empatik, dengan mode **offline-first** yang sama, dan dengan satu penampilan **QR Code kecil** yang ditempatkan di lantai kabin kapal.
-> **Inovasi yang benar-benar tidak diukur dengan skala perangkat yang kita bina, tetapi dengan seberapa baik kita melindungi kesejahteraan psikologis awak kapal.**"
+> **"Ketika kita berbicara tentang pencemaran laut, kita sering mengambil gambar plastik yang terapung di atas. Tapi kebenarannya jauh lebih menjijikkan.** Menurut Interpol, **pencemaran minyak ilegal dari kapal** merupakan pencemaran minyak yang lebih banyak daripada pencemaran minyak yang terjadi secara aksidental. Penyakit ekosistem ini berlaku di kawasan gelap, berjauhan dari pulau-pulau laut. Satu-satunya saksi yang benar untuk diserahkan adalah **awak kapal** yang berada di dalam peristiwa itu. Sebenarnya, data dari Departemen Keadilan AS menunjukkan bahwa lebih dari **75% kasus maritim yang berhasil dituntut bergantung secara seluruhnya pada whistleblower**.  Sistem legal ini sangat membutuhkan mereka, jadi mengapa mereka tetap diam? Jawabannya mudah: **ketakutan**.  Sekarang, aplikasi pelaporan maritim di luar negeri seperti EyeaSea sudah wujud. Mereka menggunakan fitur auto-detect untuk mengetahui tanda-tanda psikologi seperti plastik, botol, atau jaring untuk menjelaskan. Namun, mereka benar-benar **kurang empati**. **Itulah sebabnya saya menciptakan SafeTide.** Hal yang menjadikan SafeTide benar-benar berbeda adalah **integrasi AI psikologis / empathic AI**. Sementara sistem yang wujud berfokus pada perangkat keras atau data statis, saya menelusuri lautan biru dari **Behavioral Design**. SafeTide menggunakan model bahasa besar yang dispesialisasi dengan **persona empatik**. Ini adalah sistem pertama yang menggabungkan pendekatan behavioral dengan **cognitive interviewing** (teknik interogasi kognitif yang ramah).  Kita mulai dengan draft sederhana di sebuah kertas. Kita mulai dengan sebuah perangkat AI yang hangat dan empatik, dengan mode **offline-first** yang sama, dan dengan satu penampilan **QR Code kecil** yang ditempatkan di lantai kabin kapal. **Inovasi yang benar-benar tidak diukur dengan skala perangkat yang kita bina, tetapi dengan seberapa baik kita melindungi kesejahteraan psikologis awak kapal.**"
 
 Dari pitch video sederhana ini, lahirlah **SafeTide 1.0** (Januari–Maret 2026): chatbot empatik offline dengan deteksi emosi suara, dibangun menggunakan Ollama + Hugging Face, lengkap dengan user persona, 7-step UX Flow, dan wireframe Figma.
 
-Pada **April 2026**, setelah riset mendalam di Malaysia (MMEA sedang aktif mencari solusi AI maritime surveillance, Malaysia memperketat penegakan hukum anti-korupsi & IUU fishing), SafeTide di-upgrade menjadi **SafeTide 2.0** dengan fitur-fitur strategis:
+Pada **April 2026**, setelah riset mendalam (MMEA sedang aktif mencari solusi AI maritime surveillance, Malaysia memperketat penegakan hukum anti-korupsi & IUU fishing), SafeTide di-upgrade menjadi **SafeTide 2.0** dengan fitur-fitur strategis:
 
 - Integrasi langsung ke **dashboard MMEA**
 - **Blockchain Polygon** untuk anchoring bukti (immutable & court-admissible)
@@ -115,13 +113,13 @@ Existing reporting apps are cold, form-based, and require internet. **SafeTide c
 
 ## 📱 Live Demo & Prototype
 
-**Interactive Demo HTML VERSION:** [file:///C:/Users/Najma%20Hayett%20De%20V/Downloads/SafeTide_Portrait_Demo%20(1).html]
+**Interactive Demo HTML VERSION:** [https://drive.google.com/file/d/1xPLcDFnj4U5Vf01A1uDN0gG2bnxyN0Jx/view?usp=sharing]
 
 **🎨 Figma Prototype PDF:** [https://drive.google.com/file/d/1pzx4_0WXsNHAfRL96q0spmgIISNBNOG2/view?usp=sharing]
 
 **🎨 Figma Prototype Video:** [https://drive.google.com/file/d/1xPLcDFnj4U5Vf01A1uDN0gG2bnxyN0Jx/view?usp=sharing]
 
-**🎥 Pitch Video (Original AWAL):** [https://www.instagram.com/reel/DXCda2mMcW4/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==]
+**🎥 Pitch Video (Original Story):** [https://www.instagram.com/reel/DXCda2mMcW4/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==]
 
 ---
 
