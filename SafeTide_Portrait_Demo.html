@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>SafeTide 2.0 — Prototype | MSU iReX 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --teal:#00c9a7;--teal2:#00a88d;--teal3:#00e5c5;
+  --teal-light:#e0faf5;--teal-mid:#b2ede4;
+  --navy:#0d2137;--navy2:#1a3a55;
+  --gray:#6b8399;--gray2:#a0b4c4;--gray3:#ccdde8;
+  --bg:#eaf8f5;--bg2:#f4fcfb;--white:#ffffff;
+  --red:#ef4444;--orange:#f59e0b;--gold:#f59e0b;
+  --border:rgba(0,180,155,0.18);--border2:rgba(0,180,155,0.3);
+  --shadow:0 2px 16px rgba(0,160,130,0.10);
+  --fw:'Nunito',sans-serif;--fs:'Inter',sans-serif;
+}
+
+/* ===== ROOT LAYOUT ===== */
+html,body{width:100%;height:100%;overflow:hidden;background:#1a2a3a}
+body{display:flex;flex-direction:column;align-items:center}
+
+/* ===== TOP BANNER ===== */
+.top-banner{width:100%;max-width:430px;background:linear-gradient(90deg,var(--teal),var(--teal2));padding:8px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-title{font-family:var(--fw);font-size:13px;font-weight:800;color:white;display:flex;align-items:center;gap:6px}
+.tb-right{font-size:11px;font-weight:700;color:rgba(255,255,255,.85);background:rgba(255,255,255,.2);padding:3px 10px;border-radius:20px}
+
+/* ===== PHONE CONTAINER ===== */
+.phone{width:100%;max-width:430px;flex:1;overflow:hidden;background:var(--bg);position:relative;display:flex;flex-direction:column}
+
+/* ===== SCREENS ===== */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s;will-change:transform,opacity}
+.screen.active{transform:translateX(0);opacity:1;z-index:10;pointer-events:all}
+.screen.off-right{transform:translateX(100%);opacity:0;z-index:5;pointer-events:none}
+.screen.off-left{transform:translateX(-100%);opacity:0;z-index:5;pointer-events:none}
+.screen.exit-l{transform:translateX(-100%);opacity:0;z-index:5;pointer-events:none}
+.screen.exit-r{transform:translateX(100%);opacity:0;z-index:5;pointer-events:none}
+
+/* ===== STATUS BAR ===== */
+.sbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px 4px;font-size:12px;font-weight:700;color:var(--navy);flex-shrink:0;font-family:var(--fw)}
+.sbar-r{display:flex;align-items:center;gap:6px;font-size:12px}
+.offline-tag{font-size:10px;font-weight:700;color:#dc2626;background:#fee2e2;padding:2px 7px;border-radius:7px}
+.online-tag{font-size:10px;font-weight:700;color:var(--teal2);background:var(--teal-light);padding:2px 7px;border-radius:7px}
+.anon-tag{font-size:10px;font-weight:700;color:var(--teal2);background:var(--teal-light);padding:2px 7px;border-radius:7px}
+
+/* ===== TOP NAV ===== */
+.tnav{display:flex;align-items:center;padding:4px 16px 8px;gap:10px;flex-shrink:0}
+.back-btn{width:32px;height:32px;border-radius:50%;background:rgba(0,180,155,.12);border:none;cursor:pointer;color:var(--teal);font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s}
+.back-btn:active{background:rgba(0,180,155,.25)}
+.nav-brand{display:flex;align-items:center;gap:8px}
+.nav-logo{width:32px;height:32px;flex-shrink:0}
+.brand-name{font-family:var(--fw);font-size:15px;font-weight:900;color:var(--teal);line-height:1}
+.brand-sub{font-size:10px;color:var(--gray);font-weight:500}
+.nav-tag{margin-left:auto;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px}
+
+/* ===== SCROLL BODY ===== */
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.scroll::-webkit-scrollbar{display:none}
+
+/* ===== BOTTOM TAB ===== */
+.tabs{display:flex;background:var(--white);border-top:1px solid rgba(0,180,155,.12);padding:6px 0 28px;flex-shrink:0}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:3px 0;color:var(--gray2);transition:.15s}
+.tab.on{color:var(--teal)}
+.tab-ic{font-size:20px;line-height:1}
+.tab-lb{font-size:9px;font-weight:700;font-family:var(--fw)}
+
+/* ===== TYPOGRAPHY ===== */
+.sc-title{font-family:var(--fw);font-size:24px;font-weight:900;color:var(--teal);padding:4px 18px 2px;line-height:1.1}
+.sc-sub{font-size:13px;font-weight:600;color:var(--navy);padding:0 18px 12px;line-height:1.4}
+
+/* ===== CARDS ===== */
+.card{background:var(--white);border-radius:18px;padding:14px 16px;margin:0 14px 10px;box-shadow:0 2px 12px rgba(0,140,120,.08)}
+.card-gap{margin-top:0}
+
+/* ===== CHIPS ===== */
+.chip{display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:4px 11px;font-size:11px;font-weight:700;font-family:var(--fw)}
+.chip-teal{background:var(--teal-light);color:var(--teal2)}
+.chip-dark{background:var(--navy);color:white}
+.chip-green{background:#d1fae5;color:#059669}
+.chip-orange{background:#fef3c7;color:#d97706}
+.chip-red{background:#fee2e2;color:#dc2626}
+.chip-blue{background:#dbeafe;color:#2563eb}
+.chip-gray{background:var(--bg);color:var(--gray);border:1px solid var(--border)}
+
+/* ===== BUTTONS ===== */
+.btn{display:block;width:calc(100% - 28px);margin:0 14px;border:none;border-radius:50px;cursor:pointer;font-family:var(--fw);font-weight:800;font-size:15px;padding:17px;text-align:center;transition:.15s;letter-spacing:.2px}
+.btn:active{transform:scale(.97)}
+.btn-teal{background:var(--teal);color:white}
+.btn-teal:active{background:var(--teal2)}
+.btn-outline{background:transparent;color:var(--teal);border:2px solid var(--border2);margin-top:8px}
+.btn-outline:active{background:var(--teal-light)}
+.btn-red{background:var(--red);color:white}
+
+/* ===== LIST ITEMS ===== */
+.li{display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--white);border-radius:14px;margin:0 14px 8px;cursor:pointer;transition:.15s;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.li:active{transform:scale(.98)}
+.li-ic{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.li-ic-teal{background:var(--teal-light)}
+.li-ic-red{background:#fee2e2}
+.li-ic-orange{background:#fef3c7}
+.li-ic-green{background:#d1fae5}
+.li-ic-purple{background:#ede9fe}
+.li-ic-gray{background:var(--bg)}
+.li-ic-gold{background:#fef9c3}
+.li-tx{flex:1}
+.li-tx h4{font-size:14px;font-weight:700;color:var(--navy);font-family:var(--fw);margin-bottom:1px}
+.li-tx p{font-size:11px;color:var(--gray)}
+.li-ar{color:var(--gray2);font-size:15px}
+
+/* ===== WELLNESS BAR ===== */
+.wbar{height:10px;background:var(--bg);border-radius:5px;overflow:hidden;margin:8px 0 3px}
+.wbar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--teal),var(--teal3))}
+
+/* ===== PROGRESS ===== */
+.pbar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:3px}
+.pf-teal{background:var(--teal)}
+.pf-orange{background:#f59e0b}
+.pf-red{background:#ef4444}
+
+/* ===== CARD ROWS ===== */
+.crow{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bg);font-size:14px;font-weight:600;color:var(--navy);font-family:var(--fw)}
+.crow:last-child{border-bottom:none}
+
+/* ===== TIMELINE ===== */
+.tl{display:flex;flex-direction:column}
+.tlr{display:flex;gap:12px;padding:6px 0}
+.tlc{display:flex;flex-direction:column;align-items:center}
+.tld{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.tld-on{background:var(--teal);color:white}
+.tld-cur{background:var(--teal-light);color:var(--teal2);border:2px solid var(--teal)}
+.tld-off{background:var(--bg);color:var(--gray);border:2px solid var(--gray3)}
+.tlln{width:2px;flex:1;min-height:14px;background:var(--teal-mid);margin:2px 0}
+.tlln-off{background:var(--gray3)}
+.tlbody{flex:1;padding-bottom:4px}
+.tlbody h4{font-size:13px;font-weight:700;color:var(--navy);font-family:var(--fw);margin-bottom:2px}
+.tlbody p{font-size:11px;color:var(--gray);line-height:1.35}
+
+/* ===== CODE BLOCK ===== */
+.code{background:var(--navy);border-radius:14px;padding:14px 16px;margin:0 14px 10px;font-family:monospace;font-size:11px;color:var(--teal3);line-height:1.7}
+
+/* ===== OVERLAY CARD ===== */
+.ov-card{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:18px;padding:16px;margin:0 14px 10px;color:white}
+.ov-case{font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.ov-title{font-family:var(--fw);font-size:16px;font-weight:800;margin-bottom:6px}
+.ov-body{font-size:12px;line-height:1.55;color:rgba(255,255,255,.8)}
+.ov-hl{color:var(--teal3);font-weight:700}
+
+/* ===== WAVEFORM ===== */
+.wf{display:flex;align-items:center;gap:3px;height:36px;justify-content:center}
+.wb{width:4px;background:var(--teal);border-radius:2px;animation:wba .65s ease-in-out infinite}
+.wb:nth-child(2n){animation-delay:.1s;background:var(--teal3)}
+.wb:nth-child(3n){animation-delay:.22s}
+.wb:nth-child(4n){animation-delay:.33s;background:var(--teal-mid)}
+@keyframes wba{0%,100%{height:5px;opacity:.5}50%{height:100%;opacity:1}}
+.wf.pause .wb{animation:none;height:7px;opacity:.3}
+
+/* ===== VOICE RING ===== */
+.vring{width:150px;height:150px;border-radius:50%;background:var(--teal-light);border:3px solid var(--teal-mid);display:flex;align-items:center;justify-content:center;position:relative;margin:0 auto;animation:ringP 2s ease-in-out infinite}
+@keyframes ringP{0%,100%{box-shadow:0 0 0 0 rgba(0,180,155,.25)}50%{box-shadow:0 0 0 18px rgba(0,180,155,0)}}
+.mic-btn{width:72px;height:72px;border-radius:50%;background:var(--teal);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 4px 18px rgba(0,180,155,.4);transition:.15s}
+.mic-btn:active{transform:scale(.95)}
+
+/* ===== TOGGLE ===== */
+.trow{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--bg)}
+.trow:last-child{border-bottom:none}
+.trow-info h4{font-size:13px;font-weight:700;color:var(--navy);font-family:var(--fw)}
+.trow-info p{font-size:10px;color:var(--gray);margin-top:1px}
+.tswitch{width:42px;height:22px;border-radius:11px;cursor:pointer;position:relative;transition:.25s;flex-shrink:0}
+.tswitch.on{background:var(--teal)}
+.tswitch.off{background:var(--gray3)}
+.tknob{position:absolute;top:3px;width:16px;height:16px;border-radius:50%;background:white;transition:.25s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.tswitch.on .tknob{left:23px}
+.tswitch.off .tknob{left:3px}
+
+/* ===== STAT CARDS ===== */
+.statg{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px 10px}
+.statc{background:var(--white);border-radius:14px;padding:12px;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.statl{font-size:10px;color:var(--gray);font-weight:600;margin-bottom:3px}
+.statn{font-family:var(--fw);font-size:24px;font-weight:900;color:var(--navy);line-height:1}
+.statd{font-size:10px;font-weight:600;margin-top:2px}
+.up{color:#059669}.dn{color:#dc2626}
+
+/* ===== NGO ITEM ===== */
+.ngo-item{display:flex;align-items:center;gap:10px;background:var(--white);border-radius:13px;padding:11px 13px;margin:0 14px 8px;box-shadow:0 1px 5px rgba(0,0,0,.05)}
+.ngo-ic{width:38px;height:38px;border-radius:11px;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ngo-info{flex:1}
+.ngo-info h4{font-size:13px;font-weight:700;color:var(--navy);font-family:var(--fw)}
+.ngo-info p{font-size:10px;color:var(--gray)}
+.ngo-btn{border:none;border-radius:18px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--fw)}
+.ngo-call{background:var(--teal);color:white}
+.ngo-chat{background:var(--navy);color:white}
+.ngo-web{background:#dbeafe;color:#1d4ed8}
+.sec-label{font-size:10px;font-weight:700;letter-spacing:.8px;color:var(--gray);text-transform:uppercase;padding:6px 14px 4px}
+
+/* ===== MAP ===== */
+.mapbox{height:150px;background:linear-gradient(180deg,#e0f7f0,#d0f0e8);border-radius:14px;margin:0 14px 10px;overflow:hidden;position:relative}
+
+/* ===== REPORT TABLE ===== */
+.rtable{margin:0 14px;background:var(--white);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:10px}
+.rth{display:grid;grid-template-columns:1fr 70px 62px;padding:8px 12px;background:var(--bg);font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.4px}
+.rtr{display:grid;grid-template-columns:1fr 70px 62px;padding:10px 12px;border-bottom:1px solid var(--bg);font-size:12px}
+.rtr:last-child{border-bottom:none}
+.rtr-id{font-weight:700;color:var(--navy);font-family:var(--fw)}
+.rtr-cat{color:var(--gray);font-size:10px;margin-top:1px}
+
+/* ===== SAFE POINTS HERO ===== */
+.pts-hero{background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:18px;padding:18px;margin:0 14px 10px;color:white}
+.pts-n{font-family:var(--fw);font-size:52px;font-weight:900;line-height:1}
+.pts-s{font-size:11px;font-weight:600;opacity:.85;margin-top:4px}
+
+/* ===== WITNESS ===== */
+.wb-badge{width:38px;height:38px;border-radius:50%;background:var(--teal);color:white;font-family:var(--fw);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ===== SCORE CIRCLE ===== */
+.score-circle{width:76px;height:76px;border-radius:50%;border:6px solid var(--teal);display:flex;align-items:center;justify-content:center;margin:0 auto}
+.score-circle span{font-family:var(--fw);font-size:20px;font-weight:900;color:var(--navy)}
+
+/* ===== HELP BANNER ===== */
+.help-banner{background:#fff0f0;border:2px solid #fecaca;border-radius:16px;padding:14px;margin:0 14px 10px}
+.hb-title{font-family:var(--fw);font-size:15px;font-weight:800;color:#dc2626;margin-bottom:4px}
+.hb-body{font-size:12px;color:#7f1d1d;line-height:1.5}
+
+/* ===== LISTENING ===== */
+.listening-badge{display:inline-flex;align-items:center;gap:5px;background:var(--teal-light);color:var(--teal2);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;font-family:var(--fw)}
+.ldot{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:lb 1s infinite}
+@keyframes lb{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* ===== CHAT ===== */
+.chat-area{flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:9px}
+.chat-area::-webkit-scrollbar{display:none}
+.mrow{display:flex;gap:7px;animation:mi .25s ease}
+@keyframes mi{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.mrow.usr{flex-direction:row-reverse}
+.mavt{width:28px;height:28px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;align-self:flex-end}
+.mavt.u{background:var(--bg);border:2px solid var(--teal-mid)}
+.bubble{max-width:80%;padding:10px 13px;font-size:13px;line-height:1.5;color:var(--navy)}
+.bubble.ai{background:var(--white);border-radius:4px 16px 16px 16px;box-shadow:0 1px 5px rgba(0,0,0,.07)}
+.bubble.me{background:var(--teal);color:white;border-radius:16px 4px 16px 16px}
+.typing span{width:5px;height:5px;background:var(--gray2);border-radius:50%;display:inline-block;animation:bt .9s infinite;margin:0 1px}
+.typing span:nth-child(2){animation-delay:.15s}
+.typing span:nth-child(3){animation-delay:.3s}
+@keyframes bt{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+.cinput{background:var(--white);border-top:1px solid rgba(0,180,155,.1);padding:8px 14px 14px;flex-shrink:0}
+.cactions{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
+.cactions::-webkit-scrollbar{display:none}
+.cpill{flex-shrink:0;background:var(--bg);border:1.5px solid var(--teal-mid);border-radius:18px;padding:5px 11px;font-size:11px;font-weight:700;color:var(--teal2);cursor:pointer;white-space:nowrap;font-family:var(--fw)}
+.crow{display:flex;align-items:center;gap:7px;margin-top:6px}
+.cfield{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:22px;padding:9px 14px;font-size:12px;color:var(--navy);outline:none;font-family:var(--fs)}
+.cfield:focus{border-color:var(--teal)}
+.csend{width:36px;height:36px;border-radius:50%;background:var(--teal);border:none;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+
+/* ===== ASEAN BADGES ===== */
+.asean{display:inline-flex;align-items:center;background:var(--teal-light);color:var(--teal2);border-radius:14px;padding:3px 9px;font-size:11px;font-weight:700;font-family:var(--fw);margin:2px}
+.asean.id{background:#fef3c7;color:#d97706}
+.asean.th{background:#ede9fe;color:#7c3aed}
+
+/* ===== EVIDENCE ITEM ===== */
+.evi{display:flex;align-items:center;gap:9px;padding:9px 12px;background:var(--bg);border-radius:10px;margin-bottom:5px}
+.evi-ic{font-size:18px}
+.evi-nm{font-size:12px;font-weight:600;color:var(--navy);flex:1;font-family:var(--fw)}
+.evi-sz{font-size:10px;color:var(--gray)}
+
+/* ===== SPLASH SCREEN ===== */
+#s-splash{background:linear-gradient(165deg,#cff5ee 0%,#edfaf6 50%,#e4f9f4 100%);justify-content:center;align-items:center}
+.splash-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;animation:su .8s ease}
+@keyframes su{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+.splash-name{font-family:var(--fw);font-size:36px;font-weight:900;color:var(--teal);letter-spacing:-1px}
+.splash-sub{font-size:13px;color:var(--gray);text-align:center;line-height:1.5}
+.splash-loader{width:160px;height:4px;background:rgba(0,180,155,.15);border-radius:2px;overflow:hidden;margin-top:32px}
+.splash-bar{height:100%;background:var(--teal);border-radius:2px;animation:sl 2s ease forwards}
+@keyframes sl{from{width:0}to{width:100%}}
+
+/* ===== LOGO SVG ===== */
+.logo-svg{display:block}
+
+/* ===== PAGE SCROLL SPACING ===== */
+.pb-80{height:80px}
+.pb-20{height:20px}
+
+/* ===== BOTTOM PROGRESS BAR (IReX) ===== */
+.irex-bar{width:100%;max-width:430px;background:var(--white);border-top:2px solid var(--teal-mid);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.irex-left{font-size:11px;font-weight:700;color:var(--teal2);font-family:var(--fw)}
+.irex-right{font-size:12px;font-weight:800;color:var(--gold);font-family:var(--fw)}
+</style>
+</head>
+<body>
+
+<!-- TOP BANNER -->
+<div class="top-banner">
+  <div class="tb-title">
+    <svg width="22" height="24" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="white"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="rgba(0,180,155,.6)" opacity=".8"/></svg>
+    SafeTide 2.0 — Interactive Prototype
+  </div>
+  <div class="tb-right">🇲🇾 MSU iReX 2026</div>
+</div>
+
+<!-- PHONE -->
+<div class="phone">
+
+  <!-- ===== SPLASH ===== -->
+  <div class="screen active" id="s-splash">
+    <div class="splash-wrap">
+      <svg width="90" height="100" viewBox="0 0 40 46" fill="none">
+        <path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/>
+        <path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/>
+        <path d="M16 23C17.5 19 20 17 20 17C20 17 22.5 19 24 23" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+      </svg>
+      <div class="splash-name">SafeTide</div>
+      <div class="splash-sub">Offline Empathic AI untuk<br>Perlindungan Awak Kapal</div>
+      <div class="splash-loader"><div class="splash-bar"></div></div>
+      <div style="font-size:11px;color:var(--gray);margin-top:10px">Menyiapkan keamanan...</div>
+    </div>
+  </div>
+
+  <!-- ===== WELCOME ===== -->
+  <div class="screen off-right" id="s-welcome">
+    <div class="sbar"><span>9:41</span><div class="sbar-r">📶&nbsp;🔋</div></div>
+    <div class="tnav">
+      <div class="nav-brand">
+        <svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg>
+        <div><div class="brand-name">SafeTide</div><div class="brand-sub">Welcome</div></div>
+      </div>
+    </div>
+    <div class="scroll">
+      <div class="sc-title">Protect crew.<br>Protect sea.</div>
+      <div class="sc-sub">SafeTide melindungi awak kapal dengan AI yang paham manusia — bukan sekadar data.</div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div style="font-family:var(--fw);font-size:16px;font-weight:800;color:var(--navy)">Core Value</div>
+          <span class="chip chip-teal">Empathy-first</span>
+        </div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.5">Aman, anonim, offline, dan mudah dipakai di laut.</div>
+      </div>
+      <div class="card card-gap">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div style="font-family:var(--fw);font-size:16px;font-weight:800;color:var(--navy)">Report in 3 steps.</div>
+          <span class="chip chip-dark" style="font-size:10px">Chat→Evidence→Submit</span>
+        </div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.5">Chat dengan AI, kirim bukti, lalu laporan diproses untuk MMEA / dashboard otoritas.</div>
+      </div>
+      <div class="card card-gap">
+        <div style="font-family:var(--fw);font-size:16px;font-weight:800;color:var(--navy);margin-bottom:6px">Anonymous by default</div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.5">Identitas dilindungi, bukti terenkripsi, dan mode offline tetap aman sampai docking.</div>
+      </div>
+      <div class="card card-gap">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div><div style="font-family:var(--fw);font-size:16px;font-weight:800;color:var(--navy);margin-bottom:6px">Reward</div><div style="font-size:13px;color:var(--gray);line-height:1.5">Insentif perilaku agar awak kapal berani melapor.</div></div>
+          <span class="chip chip-teal">Safe Points</span>
+        </div>
+      </div>
+      <div class="pb-20"></div>
+    </div>
+    <div style="padding:0 0 28px"><button class="btn btn-teal" onclick="goTo('s-home')">Get Started</button></div>
+  </div>
+
+  <!-- ===== CREW HOME ===== -->
+  <div class="screen off-right" id="s-home">
+    <div class="sbar"><span>9:41</span><div class="sbar-r"><span class="offline-tag">OFFLINE</span></div></div>
+    <div class="tnav">
+      <div class="nav-brand">
+        <svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg>
+        <div><div class="brand-name">SafeTide</div><div class="brand-sub">Crew Home</div></div>
+      </div>
+    </div>
+    <div class="scroll">
+      <div class="sc-title">Crew Home</div>
+      <div class="sc-sub">Passive mental health monitoring anonim: burnout, stress, dan fatigue score.</div>
+      <div class="card" style="display:flex;align-items:center;justify-content:space-between">
+        <div><div style="font-family:var(--fw);font-size:15px;font-weight:700;color:var(--navy)">Hi, Crew 🌊</div><div style="font-size:12px;color:var(--gray);margin-top:2px">Hari ini, 11 insiden dilaporkan di zona Malacca.</div></div>
+        <span class="chip chip-teal">Melayu</span>
+      </div>
+      <div class="card card-gap">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-family:var(--fw);font-size:14px;font-weight:800;color:var(--navy)">Wellness</span><span class="chip chip-dark">78 / 100</span></div>
+        <div class="wbar"><div class="wbar-fill" style="width:78%"></div></div>
+        <div style="font-size:11px;color:var(--gray)">Status: Good. AI monitoring aktif.</div>
+      </div>
+      <div class="card card-gap">
+        <div class="crow"><span>Burnout risk<br><span style="font-size:10px;font-weight:500;color:var(--gray2)">AI monitored</span></span><span class="chip chip-green">Low</span></div>
+        <div class="crow"><span>Dock report<br><span style="font-size:10px;font-weight:500;color:var(--gray2)">NGO / doctor</span></span><span class="chip chip-teal">Ready</span></div>
+      </div>
+      <div style="padding:0 14px 8px"><button class="btn btn-teal" style="margin:0" onclick="goTo('s-chat')">Start Safe Report</button></div>
+      <div style="padding:0 14px 10px"><button class="btn btn-outline" style="margin:0" onclick="goTo('s-rewards')">✨ SafePoints</button></div>
+      <div style="display:flex;gap:8px;padding:0 14px 10px">
+        <div onclick="goTo('s-mode')" style="flex:1;background:var(--white);border-radius:14px;padding:12px;text-align:center;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.05)"><div style="font-size:18px;margin-bottom:3px">🔒</div><div style="font-size:11px;font-weight:700;color:var(--navy);font-family:var(--fw)">Anonymous</div></div>
+        <div onclick="goTo('s-voice')" style="flex:1;background:var(--white);border-radius:14px;padding:12px;text-align:center;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.05)"><div style="font-size:18px;margin-bottom:3px">📡</div><div style="font-size:11px;font-weight:700;color:var(--navy);font-family:var(--fw)">Offline-ready</div></div>
+        <div onclick="goTo('s-witness')" style="flex:1;background:var(--white);border-radius:14px;padding:12px;text-align:center;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.05)"><div style="font-size:18px;margin-bottom:3px">💛</div><div style="font-size:11px;font-weight:700;color:var(--navy);font-family:var(--fw)">Witness</div></div>
+      </div>
+      <div class="card card-gap">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:var(--fw);font-size:14px;font-weight:800;color:var(--navy)">ASEAN Mode</span><div style="display:flex;gap:4px"><span class="asean">MY</span><span class="asean id">ID</span><span class="asean th">TH</span></div></div>
+        <div style="font-size:12px;color:var(--gray);margin-top:5px">Laporan bisa diteruskan ke otoritas ASEAN.</div>
+      </div>
+      <div class="pb-80"></div>
+    </div>
+    <div class="tabs">
+      <div class="tab on" onclick="goTo('s-home')"><div class="tab-ic">🏠</div><div class="tab-lb">Home</div></div>
+      <div class="tab" onclick="goTo('s-review')"><div class="tab-ic">📋</div><div class="tab-lb">Report</div></div>
+      <div class="tab" onclick="goTo('s-chat')"><div class="tab-ic">💬</div><div class="tab-lb">Chat</div></div>
+      <div class="tab" onclick="goTo('s-dashboard')"><div class="tab-ic">📊</div><div class="tab-lb">Dash</div></div>
+      <div class="tab" onclick="goTo('s-more')"><div class="tab-ic">⚙️</div><div class="tab-lb">More</div></div>
+    </div>
+  </div>
+
+  <!-- ===== MODE SELECT ===== -->
+  <div class="screen off-right" id="s-mode">
+    <div class="sbar"><span>9:41</span><div class="sbar-r">📶&nbsp;🔋</div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">Mode Select</div></div></div></div>
+    <div class="scroll">
+      <div class="sc-title">Choose Mode</div>
+      <div class="sc-sub">Anonymous recommended. Verified mode untuk laporan yang ingin langsung masuk ke MMEA.</div>
+      <div class="card" id="card-anon" style="border:2px solid var(--teal);cursor:pointer" onclick="selMode('anon')">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px"><span style="font-family:var(--fw);font-size:18px;font-weight:800;color:var(--navy)">Anonymous</span><span class="chip chip-teal">Recommended</span></div>
+        <div style="font-size:13px;color:var(--gray)">Identitas terlindungi penuh.</div>
+      </div>
+      <div class="card card-gap" id="card-veri" style="cursor:pointer;border:2px solid transparent" onclick="selMode('veri')">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px"><span style="font-family:var(--fw);font-size:18px;font-weight:800;color:var(--navy)">Verified</span><span class="chip chip-dark">MMEA</span></div>
+        <div style="font-size:13px;color:var(--gray)">Masuk ke dashboard otoritas.</div>
+      </div>
+    </div>
+    <div style="padding:0 0 28px"><button class="btn btn-teal" onclick="goTo('s-home')">Continue</button><button class="btn btn-outline" onclick="goBack()">Back</button></div>
+  </div>
+
+  <!-- ===== VOICE REPORT ===== -->
+  <div class="screen off-right" id="s-voice">
+    <div class="sbar"><span>9:41</span><div class="sbar-r"><span class="offline-tag">OFFLINE</span></div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">Voice Report</div></div></div></div>
+    <div class="scroll">
+      <div class="sc-title">Record evidence</div>
+      <div class="sc-sub">Voice note dengan deteksi emosi, noise handling, dan privacy mode.</div>
+      <div class="card" style="text-align:center;padding:24px 16px">
+        <div class="vring" style="margin-bottom:16px"><button class="mic-btn" id="mic-btn" onclick="toggleVoice()">🎙️</button></div>
+        <div class="wf pause" id="wf">
+          <div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding:0 4px">
+          <span style="font-size:12px;color:var(--gray)">Record</span>
+          <span id="vtimer" style="font-family:var(--fw);font-size:16px;font-weight:800;color:var(--navy)">00:00 / 01:00</span>
+        </div>
+      </div>
+    </div>
+    <div style="padding:0 0 28px"><button class="btn btn-teal" onclick="goTo('s-review')">Stop &amp; Review</button><button class="btn btn-outline" onclick="goTo('s-review')">Use this recording</button></div>
+    <div class="tabs">
+      <div class="tab" onclick="goTo('s-home')"><div class="tab-ic">🏠</div><div class="tab-lb">Home</div></div>
+      <div class="tab on"><div class="tab-ic">📋</div><div class="tab-lb">Report</div></div>
+      <div class="tab" onclick="goTo('s-chat')"><div class="tab-ic">💬</div><div class="tab-lb">Chat</div></div>
+      <div class="tab" onclick="goTo('s-dashboard')"><div class="tab-ic">📊</div><div class="tab-lb">Dash</div></div>
+      <div class="tab" onclick="goTo('s-more')"><div class="tab-ic">⚙️</div><div class="tab-lb">More</div></div>
+    </div>
+  </div>
+
+  <!-- ===== CHAT AI ===== -->
+  <div class="screen off-right" id="s-chat" style="display:flex;flex-direction:column">
+    <div class="sbar"><span>9:41</span><div class="sbar-r"><span class="offline-tag">OFFLINE</span></div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">Chat Support</div></div></div></div>
+    <div style="padding:2px 14px 8px;flex-shrink:0">
+      <span class="listening-badge"><span class="ldot"></span>Listening</span>
+      <div style="font-family:var(--fw);font-size:20px;font-weight:900;color:var(--teal);margin-top:4px">Lautan AI 🌊</div>
+      <div style="font-size:11px;color:var(--gray)">Empathic chat · Voice · Foto · Mood-adaptive</div>
+    </div>
+    <div class="chat-area" id="chatArea">
+      <div class="mrow"><div class="mavt">🌊</div><div><div class="bubble ai">Halo 👋 Saya <b>Lautan</b>, asisten SafeTide. Ceritakan apa yang terjadi — saya akan membantu dengan aman dan anonim.</div></div></div>
+    </div>
+    <div class="cinput">
+      <div class="cactions">
+        <div class="cpill" onclick="goTo('s-voice')">🎙️ Voice note</div>
+        <div class="cpill" onclick="goTo('s-review')">📷 Upload foto</div>
+        <div class="cpill">📍 Lokasi</div>
+        <div class="cpill">🔏 Stay anon</div>
+      </div>
+      <div class="crow"><input class="cfield" id="ci" placeholder="Tulis pesan atau unggah bukti..." onkeydown="if(event.key==='Enter')sndMsg()"><button class="csend" onclick="sndMsg()">➤</button></div>
+    </div>
+    <div class="tabs">
+      <div class="tab" onclick="goTo('s-home')"><div class="tab-ic">🏠</div><div class="tab-lb">Home</div></div>
+      <div class="tab" onclick="goTo('s-review')"><div class="tab-ic">📋</div><div class="tab-lb">Report</div></div>
+      <div class="tab on"><div class="tab-ic">💬</div><div class="tab-lb">Chat</div></div>
+      <div class="tab" onclick="goTo('s-dashboard')"><div class="tab-ic">📊</div><div class="tab-lb">Dash</div></div>
+      <div class="tab" onclick="goTo('s-more')"><div class="tab-ic">⚙️</div><div class="tab-lb">More</div></div>
+    </div>
+  </div>
+
+  <!-- ===== REVIEW & SUBMIT ===== -->
+  <div class="screen off-right" id="s-review">
+    <div class="sbar"><span>9:41</span><div class="sbar-r"><span class="offline-tag">OFFLINE</span></div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">Review &amp; Submit</div></div></div></div>
+    <div class="scroll">
+      <div class="sc-title">Review report</div>
+      <div class="sc-sub">Summary laporan, evidence list, blockchain hash, dan submit ke MMEA / anon mode.</div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-family:var(--fw);font-weight:700;color:var(--navy)">Evidence</span><span class="chip chip-teal">Photo + Voice</span></div>
+        <div style="font-size:12px;color:var(--gray);margin-bottom:10px">2 files attached, auto location on.</div>
+        <div class="evi"><span class="evi-ic">📷</span><span class="evi-nm">IUU_Fishing_01.jpg</span><span class="evi-sz">2.4 MB</span></div>
+        <div class="evi"><span class="evi-ic">🎙️</span><span class="evi-nm">voice_note_00:47.mp3</span><span class="evi-sz">680 KB</span></div>
+      </div>
+      <div class="code">
+        <div style="color:var(--gray2);font-size:10px;margin-bottom:4px">Hash</div>
+        <div>0x9f3a...c12d5a</div>
+        <div style="color:var(--gray2);font-size:10px;margin-top:8px">Ready to anchor to Polygon and forward to MMEA.</div>
+      </div>
+      <div class="pb-20"></div>
+    </div>
+    <div style="padding:0 0 28px"><button class="btn btn-teal" id="submit-btn" onclick="doSubmit()">Submit Securely</button><button class="btn btn-outline" onclick="goBack()">Edit</button></div>
+    <div class="tabs">
+      <div class="tab" onclick="goTo('s-home')"><div class="tab-ic">🏠</div><div class="tab-lb">Home</div></div>
+      <div class="tab on"><div class="tab-ic">📋</div><div class="tab-lb">Report</div></div>
+      <div class="tab" onclick="goTo('s-chat')"><div class="tab-ic">💬</div><div class="tab-lb">Chat</div></div>
+      <div class="tab" onclick="goTo('s-dashboard')"><div class="tab-ic">📊</div><div class="tab-lb">Dash</div></div>
+      <div class="tab" onclick="goTo('s-more')"><div class="tab-ic">⚙️</div><div class="tab-lb">More</div></div>
+    </div>
+  </div>
+
+  <!-- ===== TRACKING ===== -->
+  <div class="screen off-right" id="s-tracking">
+    <div class="sbar"><span>9:42</span><div class="sbar-r"><span class="offline-tag">OFFLINE</span></div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">Tracking</div></div></div></div>
+    <div class="scroll">
+      <div class="sc-title">Status tracking</div>
+      <div class="sc-sub">Pantau status laporan jika verified; anon tetap terlindungi.</div>
+      <div class="card">
+        <div class="tl">
+          <div class="tlr"><div class="tlc"><div class="tld tld-on">✓</div><div class="tlln"></div></div><div class="tlbody"><h4>Diterima</h4><p>09:41 UTC · AES-256</p></div></div>
+          <div class="tlr"><div class="tlc"><div class="tld tld-on">✓</div><div class="tlln"></div></div><div class="tlbody"><h4>Blockchain anchored</h4><p>Polygon · Confirmed</p></div></div>
+          <div class="tlr"><div class="tlc"><div class="tld tld-on">✓</div><div class="tlln"></div></div><div class="tlbody"><h4>MMEA notified</h4><p>Encrypted webhook sent</p></div></div>
+          <div class="tlr"><div class="tlc"><div class="tld tld-cur">4</div></div><div class="tlbody"><h4>Under review</h4><p>Waiting action from MMEA</p></div></div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:0 0 28px"><button class="btn btn-teal" onclick="goTo('s-rewards')">View Safe Points</button><button class="btn btn-outline" onclick="goTo('s-home')">Back To Home</button></div>
+  </div>
+
+  <!-- ===== REWARDS ===== -->
+  <div class="screen off-right" id="s-rewards">
+    <div class="sbar"><span>9:42</span><div class="sbar-r">📶&nbsp;🔋</div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">Rewards &amp; redeem</div></div></div></div>
+    <div class="scroll">
+      <div class="pts-hero"><div style="font-size:10px;font-weight:700;opacity:.75;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">SAFE POINTS BALANCE</div><div class="pts-n">1,280</div><div class="pts-s">+150 from latest report 🎉</div></div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span style="font-family:var(--fw);font-size:14px;font-weight:800;color:var(--navy)">Redeem options</span><span class="chip chip-teal">港</span></div>
+        <div class="li" style="margin:0 0 6px"><div class="li-ic li-ic-orange">⚓</div><div class="li-tx"><h4>Priority docking</h4><p>Use 300 points</p></div></div>
+        <div class="li" style="margin:0 0 6px"><div class="li-ic li-ic-teal">⛽</div><div class="li-tx"><h4>Discount bunkering</h4><p>Use 200 points</p></div></div>
+        <div class="li" style="margin:0"><div class="li-ic li-ic-green">⚖️</div><div class="li-tx"><h4>Legal consultation</h4><p>Use 500 points</p></div></div>
+      </div>
+      <div class="pb-20"></div>
+    </div>
+    <div style="padding:0 0 28px"><button class="btn btn-teal" onclick="goTo('s-dashboard')">Go to Authority Dashboard</button><button class="btn btn-outline" onclick="goTo('s-tracking')">Back To Tracking</button></div>
+  </div>
+
+  <!-- ===== NEED HELP ===== -->
+  <div class="screen off-right" id="s-help">
+    <div class="sbar"><span>9:41</span><div class="sbar-r">📶&nbsp;🔋</div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">Need Help?</div></div></div></div>
+    <div class="scroll">
+      <div class="sc-title">Need help?</div>
+      <div class="sc-sub">Quick access ke panduan, hotline NGO, dan mode darurat.</div>
+      <div class="help-banner"><div class="hb-title">Kamu tidak sendirian.</div><div class="hb-body">SafeTide siap bantu kamu melaporkan dengan aman, menemukan NGO terpercaya, dan menyembunyikan aplikasi ini kapan saja.</div></div>
+      <div class="li" onclick="goTo('s-ngo')"><div class="li-ic li-ic-red">📞</div><div class="li-tx"><h4>Trusted NGO</h4><p>Hotline &amp; maritime help line</p></div><span class="li-ar">›</span></div>
+      <div class="li" onclick="goTo('s-guide')"><div class="li-ic li-ic-teal">📋</div><div class="li-tx"><h4>Quick Guide</h4><p>What to do now — step by step</p></div><span class="li-ar">›</span></div>
+      <div class="li" onclick="goTo('s-silent')"><div class="li-ic li-ic-gray">😐</div><div class="li-tx"><h4>Silent Mode</h4><p>Hide app instantly</p></div><span class="li-ar">›</span></div>
+      <div class="pb-20"></div>
+    </div>
+    <div style="padding:0 0 28px"><button class="btn btn-teal" onclick="goTo('s-ngo')">Call trusted NGO now</button><button class="btn btn-outline" onclick="goTo('s-guide')">View quick guide</button></div>
+  </div>
+
+  <!-- ===== TRUSTED NGO ===== -->
+  <div class="screen off-right" id="s-ngo">
+    <div class="sbar"><span>9:41</span><div class="sbar-r">📶&nbsp;🔋</div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">Trusted NGO</div></div></div></div>
+    <div class="scroll">
+      <div class="sc-title">Hubungi Bantuan</div>
+      <div class="sc-sub">Semua kontak ini aman, anonim, dan bisa diakses offline setelah disimpan.</div>
+      <div class="sec-label">MALAYSIA</div>
+      <div class="ngo-item"><div class="ngo-ic">🌊</div><div class="ngo-info"><h4>Reef Check Malaysia</h4><p>Crew welfare + environment</p></div><button class="ngo-btn ngo-call" onclick="alert('Menghubungi Reef Check Malaysia...')">📞 Call</button></div>
+      <div class="ngo-item"><div class="ngo-ic">⚓</div><div class="ngo-info"><h4>MMEA Helpline</h4><p>+60 3-6263 6888 · 24/7</p></div><button class="ngo-btn ngo-call" onclick="alert('Menghubungi MMEA...')">📞 Call</button></div>
+      <div class="ngo-item"><div class="ngo-ic">🏥</div><div class="ngo-info"><h4>Port Doctor</h4><p>Mental health · anonymous</p></div><button class="ngo-btn ngo-chat" onclick="alert('Chat dengan Port Doctor...')">💬 Chat</button></div>
+      <div class="sec-label">INDONESIA</div>
+      <div class="ngo-item"><div class="ngo-ic">🚢</div><div class="ngo-info"><h4>BAKAMLA Hotline</h4><p>+62 21-5208888</p></div><button class="ngo-btn ngo-call">📞 Call</button></div>
+      <div class="ngo-item"><div class="ngo-ic">⚖️</div><div class="ngo-info"><h4>ILO MLC Helpdesk</h4><p>Maritime Labour Convention</p></div><button class="ngo-btn ngo-web">🌐 Web</button></div>
+      <div class="sec-label">THAILAND</div>
+      <div class="ngo-item"><div class="ngo-ic">⛵</div><div class="ngo-info"><h4>HTMS Command</h4><p>Thailand maritime authority</p></div><button class="ngo-btn ngo-call">📞 Call</button></div>
+      <div class="pb-20"></div>
+    </div>
+    <div style="padding:0 0 28px"><button class="btn btn-outline" onclick="goTo('s-help')">Back To Help Hub</button></div>
+  </div>
+
+  <!-- ===== QUICK GUIDE ===== -->
+  <div class="screen off-right" id="s-guide">
+    <div class="sbar"><span>9:41</span><div class="sbar-r">📶&nbsp;🔋</div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">Quick Guide</div></div></div></div>
+    <div class="scroll">
+      <div class="sc-title">Quick Guide</div>
+      <div class="sc-sub">Ikuti langkah ini dengan tenang. SafeTide ada bersamamu.</div>
+      <div class="card">
+        <div class="tl">
+          <div class="tlr"><div class="tlc"><div class="tld tld-on">1</div><div class="tlln"></div></div><div class="tlbody"><h4>Aktifkan Silent Mode</h4><p>Sembunyikan app jika ada yang melihat layarmu</p></div></div>
+          <div class="tlr"><div class="tlc"><div class="tld tld-on">2</div><div class="tlln"></div></div><div class="tlbody"><h4>Pilih Mode Anonim</h4><p>Identitasmu 100% terlindungi</p></div></div>
+          <div class="tlr"><div class="tlc"><div class="tld tld-cur">3</div><div class="tlln tlln-off"></div></div><div class="tlbody"><h4>Rekam atau Foto Bukti</h4><p>Foto, voice note, atau lokasi GPS</p></div></div>
+          <div class="tlr"><div class="tlc"><div class="tld tld-off">4</div></div><div class="tlbody"><h4>Submit Laporan</h4><p>Tersimpan offline, dikirim saat docking</p></div></div>
+        </div>
+      </div>
+      <div class="help-banner"><div class="hb-title">⚠️ Jika situasi darurat</div><div class="hb-body">Aktifkan Silent Mode sekarang atau tekan tombol SOS untuk menyembunyikan semua riwayat laporan dan chat dari layar.</div></div>
+      <div class="pb-20"></div>
+    </div>
+    <div style="padding:0 0 28px"><button class="btn btn-red" onclick="goTo('s-silent')">Aktifkan Silent Mode</button><button class="btn btn-outline" onclick="goTo('s-help')">Back To Help Hub</button></div>
+  </div>
+
+  <!-- ===== SILENT MODE ===== -->
+  <div class="screen off-right" id="s-silent">
+    <div class="sbar"><span>9:41</span><div class="sbar-r">📶&nbsp;🔋</div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">Silent Mode</div></div></div></div>
+    <div class="scroll">
+      <div class="sc-title">Silent Mode</div>
+      <div class="sc-sub">Ikuti langkah ini dengan tenang. SafeTide ada bersamamu.</div>
+      <div class="ov-card"><div style="font-size:30px;text-align:center;margin-bottom:8px">😐</div><div class="ov-title" style="text-align:center">Silent Mode</div><div class="ov-body" style="text-align:center">Semua riwayat chat, laporan, dan bukti disembunyikan dari layar. Aplikasi tampak seperti kalkulator atau catatan biasa.</div></div>
+      <div class="card">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.8px;color:var(--gray);text-transform:uppercase;margin-bottom:8px">PENGATURAN</div>
+        <div class="trow"><div class="trow-info"><h4>Hide app instantly</h4><p>Sembunyikan ikon SafeTide dari homescreen</p></div><div class="tswitch on" onclick="togSwitch(this)"><div class="tknob"></div></div></div>
+        <div class="trow"><div class="trow-info"><h4>Camouflage mode</h4><p>Tampilkan app sebagai kalkulator</p></div><div class="tswitch on" onclick="togSwitch(this)"><div class="tknob"></div></div></div>
+        <div class="trow"><div class="trow-info"><h4>Clear screen on shake</h4><p>Kocok HP untuk hapus layar sekarang</p></div><div class="tswitch on" onclick="togSwitch(this)"><div class="tknob"></div></div></div>
+        <div class="trow"><div class="trow-info"><h4>Auto-lock after 30s</h4><p>Kunci aplikasi otomatis saat idle</p></div><div class="tswitch on" onclick="togSwitch(this)"><div class="tknob"></div></div></div>
+      </div>
+      <div class="card card-gap">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.8px;color:var(--gray);text-transform:uppercase;margin-bottom:8px">STATUS PERLINDUNGAN</div>
+        <div class="crow"><span>Identitas kamu</span><span class="chip chip-teal">Terlindungi</span></div>
+        <div class="crow"><span>Chat history</span><span class="chip chip-teal">Encrypted</span></div>
+        <div class="crow"><span>Evidence files</span><span class="chip chip-dark">AES-256</span></div>
+      </div>
+      <div class="pb-20"></div>
+    </div>
+    <div style="padding:0 0 28px"><button class="btn btn-red" onclick="alert('🔴 Silent Mode Aktif! App disembunyikan.')">🆘 HIDE APP NOW</button><button class="btn btn-outline" onclick="goTo('s-help')">Back To Help Hub</button></div>
+  </div>
+
+  <!-- ===== MMEA DASHBOARD ===== -->
+  <div class="screen off-right" id="s-dashboard">
+    <div class="sbar"><span>9:42</span><div class="sbar-r"><span class="online-tag">ONLINE</span></div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">Authority Dashboard</div></div></div></div>
+    <div class="scroll">
+      <div class="sc-title">MMEA Dashboard</div>
+      <div class="sc-sub" style="padding-bottom:6px">Card dashboard, tables, filters, hotspot map, blockchain proof, ESG score.</div>
+      <div class="statg">
+        <div class="statc"><div class="statl">Urgent</div><div class="statn">27</div><div class="statd up">↑ Aktif</div></div>
+        <div class="statc"><div class="statl">Verified</div><div class="statn">92%</div><div class="statd up">↑ High</div></div>
+      </div>
+      <div class="mapbox">
+        <svg width="100%" height="150" viewBox="0 0 400 150">
+          <rect width="400" height="150" fill="#d4f0e8"/>
+          <path d="M30 38 L110 26 L190 40 L260 28 L320 46 L320 88 L260 96 L190 84 L110 90 L40 78 Z" fill="rgba(0,130,100,.22)" stroke="rgba(0,160,120,.35)" stroke-width="1"/>
+          <text x="178" y="65" fill="rgba(0,120,90,.45)" font-size="8" text-anchor="middle" font-weight="700" font-family="Arial">SEMENANJUNG MALAYSIA</text>
+          <circle cx="200" cy="114" r="20" fill="rgba(0,180,155,.1)" stroke="rgba(0,180,155,.4)" stroke-width="1.5" stroke-dasharray="4 2"/>
+          <circle cx="200" cy="114" r="9" fill="rgba(0,180,155,.22)"/>
+          <circle cx="300" cy="105" r="15" fill="rgba(245,158,11,.08)" stroke="rgba(245,158,11,.35)" stroke-width="1" stroke-dasharray="3 2"/>
+          <circle cx="82" cy="118" r="13" fill="rgba(239,68,68,.08)" stroke="rgba(239,68,68,.35)" stroke-width="1"/>
+          <circle cx="196" cy="112" r="4" fill="#00c9a7"/><circle cx="207" cy="118" r="3" fill="#00c9a7" opacity=".7"/>
+          <circle cx="294" cy="103" r="3" fill="#f59e0b" opacity=".8"/>
+          <circle cx="88" cy="116" r="3" fill="#ef4444" opacity=".7"/>
+          <rect x="6" y="6" width="30" height="12" rx="5" fill="var(--teal)" opacity=".8"/><text x="21" y="15" fill="white" font-size="7" text-anchor="middle" font-weight="700" font-family="Arial">AIS</text>
+          <rect x="42" y="6" width="44" height="12" rx="5" fill="var(--teal)" opacity=".6"/><text x="64" y="15" fill="white" font-size="7" text-anchor="middle" font-weight="700" font-family="Arial">Hotspot</text>
+        </svg>
+      </div>
+      <div style="padding:0 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center"><span style="font-family:var(--fw);font-size:14px;font-weight:800;color:var(--navy)">Report Analytics</span><span class="chip chip-teal">MMEA Queue</span></div>
+      <div class="rtable">
+        <div class="rth"><span>Case ID</span><span>Category</span><span>Status</span></div>
+        <div class="rtr"><div><div class="rtr-id">ST-2401</div><div class="rtr-cat">IUU Fishing</div></div><div style="font-size:10px;color:var(--gray)">Malacca</div><span class="chip chip-red" style="font-size:10px">Escalated</span></div>
+        <div class="rtr"><div><div class="rtr-id">ST-2402</div><div class="rtr-cat">Pollution</div></div><div style="font-size:10px;color:var(--gray)">P.Klang</div><span class="chip chip-orange" style="font-size:10px">Review</span></div>
+        <div class="rtr"><div><div class="rtr-id">ST-2403</div><div class="rtr-cat">Crew Abuse</div></div><div style="font-size:10px;color:var(--gray)">Sabah</div><span class="chip chip-red" style="font-size:10px">Urgent</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px 10px">
+        <div class="statc" style="cursor:pointer" onclick="goTo('s-blockchain')"><div style="font-size:18px;margin-bottom:3px">⛓️</div><div style="font-family:var(--fw);font-size:12px;font-weight:800;color:var(--navy)">Blockchain</div><div style="font-size:10px;color:var(--gray)">Hash verified</div></div>
+        <div class="statc" style="cursor:pointer" onclick="goTo('s-asean')"><div style="font-size:18px;margin-bottom:3px">🌏</div><div style="font-family:var(--fw);font-size:12px;font-weight:800;color:var(--navy)">ASEAN</div><div style="font-size:10px;color:var(--gray)">Cross-border on</div></div>
+        <div class="statc" style="cursor:pointer" onclick="goTo('s-legal')"><div style="font-size:18px;margin-bottom:3px">🤖</div><div style="font-family:var(--fw);font-size:12px;font-weight:800;color:var(--navy)">AI Brief</div><div style="font-size:10px;color:var(--gray)">Auto-summary</div></div>
+        <div class="statc" style="cursor:pointer" onclick="goTo('s-esg')"><div style="font-size:18px;margin-bottom:3px">📊</div><div style="font-family:var(--fw);font-size:12px;font-weight:800;color:var(--navy)">ESG Score</div><div style="font-size:10px;color:var(--gray)">Public metric</div></div>
+      </div>
+      <div class="pb-80"></div>
+    </div>
+    <div class="tabs">
+      <div class="tab" onclick="goTo('s-home')"><div class="tab-ic">🏠</div><div class="tab-lb">Home</div></div>
+      <div class="tab" onclick="goTo('s-review')"><div class="tab-ic">📋</div><div class="tab-lb">Report</div></div>
+      <div class="tab" onclick="goTo('s-chat')"><div class="tab-ic">💬</div><div class="tab-lb">Chat</div></div>
+      <div class="tab on"><div class="tab-ic">📊</div><div class="tab-lb">Dash</div></div>
+      <div class="tab" onclick="goTo('s-more')"><div class="tab-ic">⚙️</div><div class="tab-lb">More</div></div>
+    </div>
+  </div>
+
+  <!-- ===== MORE ===== -->
+  <div class="screen off-right" id="s-more">
+    <div class="sbar"><span>9:42</span><div class="sbar-r">📶&nbsp;🔋</div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">More features</div></div></div></div>
+    <div class="scroll">
+      <div class="sc-title">More</div>
+      <div class="sc-sub">Fitur lanjutan SafeTide 2.0 — semua di satu tempat.</div>
+      <div class="li" onclick="goTo('s-blockchain')"><div class="li-ic li-ic-teal">⛓️</div><div class="li-tx"><h4>Blockchain Anchor</h4><p>Verifikasi bukti immutable</p></div><span class="li-ar">›</span></div>
+      <div class="li" onclick="goTo('s-legal')"><div class="li-ic li-ic-teal">🤖</div><div class="li-tx"><h4>AI Legal Brief</h4><p>Legal brief otomatis</p></div><span class="li-ar">›</span></div>
+      <div class="li" onclick="goTo('s-asean')"><div class="li-ic li-ic-teal">🌏</div><div class="li-tx"><h4>ASEAN Cross-Border</h4><p>MY · ID · TH routing</p></div><span class="li-ar">›</span></div>
+      <div class="li" onclick="goTo('s-esg')"><div class="li-ic li-ic-teal">📊</div><div class="li-tx"><h4>ESG Score</h4><p>Vessel compliance public</p></div><span class="li-ar">›</span></div>
+      <div class="li" onclick="goTo('s-wellness')"><div class="li-ic li-ic-green">💚</div><div class="li-tx"><h4>Crew Pulse</h4><p>Wellness monitoring</p></div><span class="li-ar">›</span></div>
+      <div class="li" onclick="goTo('s-witness')"><div class="li-ic li-ic-purple">👥</div><div class="li-tx"><h4>Witness Network</h4><p>Laporan kolektif anonim</p></div><span class="li-ar">›</span></div>
+      <div class="li" onclick="goTo('s-help')"><div class="li-ic li-ic-orange">🆘</div><div class="li-tx"><h4>Need Help?</h4><p>NGO, guide, silent mode</p></div><span class="li-ar">›</span></div>
+      <div class="li" onclick="goTo('s-rewards')"><div class="li-ic li-ic-gold">⭐</div><div class="li-tx"><h4>Safe Points</h4><p>Tukar poin di pelabuhan</p></div><span class="li-ar">›</span></div>
+      <div class="pb-80"></div>
+    </div>
+    <div class="tabs">
+      <div class="tab" onclick="goTo('s-home')"><div class="tab-ic">🏠</div><div class="tab-lb">Home</div></div>
+      <div class="tab" onclick="goTo('s-review')"><div class="tab-ic">📋</div><div class="tab-lb">Report</div></div>
+      <div class="tab" onclick="goTo('s-chat')"><div class="tab-ic">💬</div><div class="tab-lb">Chat</div></div>
+      <div class="tab" onclick="goTo('s-dashboard')"><div class="tab-ic">📊</div><div class="tab-lb">Dash</div></div>
+      <div class="tab on"><div class="tab-ic">⚙️</div><div class="tab-lb">More</div></div>
+    </div>
+  </div>
+
+  <!-- ===== WITNESS NETWORK ===== -->
+  <div class="screen off-right" id="s-witness">
+    <div class="sbar"><span>9:42</span><div class="sbar-r"><span class="anon-tag">Anonim</span></div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">Witness Network</div></div></div></div>
+    <div class="scroll">
+      <div class="sc-title">Multi-crew anonymous</div>
+      <div class="sc-sub">Beberapa awak kapal menandatangani laporan bersama tanpa saling tahu identitas, menggunakan zero-knowledge proof.</div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span style="font-family:var(--fw);font-weight:700;color:var(--navy)">Witness aktif</span><span class="chip chip-green">3 signed</span></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--bg)"><div class="wb-badge">W1</div><div style="flex:1"><div style="font-weight:700;font-family:var(--fw);font-size:13px;color:var(--navy)">Witness A</div><div style="font-size:10px;color:var(--gray)">Signed · Anonim · 09:12 UTC</div></div><span class="chip chip-green" style="font-size:10px">✓ Verified</span></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--bg)"><div class="wb-badge">W2</div><div style="flex:1"><div style="font-weight:700;font-family:var(--fw);font-size:13px;color:var(--navy)">Witness B</div><div style="font-size:10px;color:var(--gray)">Signed · Anonim · 09:18 UTC</div></div><span class="chip chip-green" style="font-size:10px">✓ Verified</span></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:9px 0"><div class="wb-badge">W3</div><div style="flex:1"><div style="font-weight:700;font-family:var(--fw);font-size:13px;color:var(--navy)">Witness C</div><div style="font-size:10px;color:var(--gray)">Signed · Anonim · 09:31 UTC</div></div><span class="chip chip-green" style="font-size:10px">✓ Verified</span></div>
+      </div>
+      <div class="card card-gap">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-weight:700;font-family:var(--fw);color:var(--navy)">Collective proof</span><span class="chip chip-dark">ZK-proof</span></div>
+        <div class="code" style="font-size:10px">proof_id: zkp_ST2403_w3<br>witnesses: [HIDDEN]<br>threshold: 3/3 ✓<br>anchored: Polygon #58,204,311</div>
+      </div>
+      <div class="card card-gap">
+        <div class="crow"><span>Case ST-2403</span><span class="chip chip-teal">Multi-witness</span></div>
+        <div class="crow"><span>Legal strength</span><span class="chip chip-green">Strong</span></div>
+        <div class="crow"><span>MMEA status</span><span class="chip chip-orange">Reviewing</span></div>
+      </div>
+      <div class="pb-20"></div>
+    </div>
+    <div style="padding:0 0 28px"><button class="btn btn-teal" onclick="alert('QR Code muncul untuk undang witness baru...')">+ Invite another witness</button><button class="btn btn-outline" onclick="goBack()">Remove my signature</button></div>
+    <div class="tabs">
+      <div class="tab" onclick="goTo('s-home')"><div class="tab-ic">🏠</div><div class="tab-lb">Home</div></div>
+      <div class="tab" onclick="goTo('s-review')"><div class="tab-ic">📋</div><div class="tab-lb">Report</div></div>
+      <div class="tab" onclick="goTo('s-chat')"><div class="tab-ic">💬</div><div class="tab-lb">Chat</div></div>
+      <div class="tab" onclick="goTo('s-dashboard')"><div class="tab-ic">📊</div><div class="tab-lb">Dash</div></div>
+      <div class="tab on" onclick="goTo('s-more')"><div class="tab-ic">⚙️</div><div class="tab-lb">More</div></div>
+    </div>
+  </div>
+
+  <!-- ===== AI LEGAL BRIEF ===== -->
+  <div class="screen off-right" id="s-legal">
+    <div class="sbar"><span>9:42</span><div class="sbar-r">📶&nbsp;🔋</div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">AI Legal Brief</div></div></div></div>
+    <div class="scroll">
+      <div class="sc-title">Legal Brief</div>
+      <div class="sc-sub">Berdasarkan Merchant Shipping Ordinance Malaysia &amp; UU Pelayaran Indonesia — dalam bahasa yang mudah dipahami.</div>
+      <div class="ov-card"><div class="ov-case">CASE: ST-2403 · Crew Abuse · Sabah</div><div class="ov-body">Berdasarkan laporan yang diterima, tindakan kapten diduga melanggar <span class="ov-hl">Seksyen 62 Merchant Shipping Ordinance 1952</span> mengenai perlakuan buruk terhadap anak buah kapal. Bukti suara dan foto telah dianchor ke blockchain pada <span class="ov-hl">02 Mei 2026, 09:14 UTC</span>.</div></div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-family:var(--fw);font-weight:700;color:var(--navy)">Langkah selanjutnya</span><span class="chip chip-teal">3 steps</span></div>
+        <div class="tl">
+          <div class="tlr"><div class="tlc"><div class="tld tld-on">1</div><div class="tlln"></div></div><div class="tlbody"><h4>Simpan brief ini</h4><p>sebagai PDF</p></div></div>
+          <div class="tlr"><div class="tlc"><div class="tld tld-on">2</div><div class="tlln"></div></div><div class="tlbody"><h4>Tunjukkan ke NGO</h4><p>atau pengacara</p></div></div>
+          <div class="tlr"><div class="tlc"><div class="tld tld-cur">3</div></div><div class="tlbody"><h4>Lapor ke MMEA</h4><p>via dashboard</p></div></div>
+        </div>
+      </div>
+      <div class="card card-gap">
+        <div style="font-family:var(--fw);font-weight:700;color:var(--navy);margin-bottom:10px">Referensi hukum</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg);font-size:12px;color:var(--gray)">Merchant Shipping Ordinance 1952, s.62<span class="asean">MY</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg);font-size:12px;color:var(--gray)">UU Pelayaran No.17/2008, Ps.51<span class="asean id">ID</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;font-size:12px;color:var(--gray)">MLC 2006 — Maritime Labour Convention<span class="chip chip-gray" style="font-size:10px">ILO</span></div>
+      </div>
+      <div class="pb-20"></div>
+    </div>
+    <div style="padding:0 0 28px"><button class="btn btn-teal" onclick="alert('Mengunduh PDF Brief...')">📥 Download PDF Brief</button><button class="btn btn-outline">Share ke NGO</button></div>
+    <div class="tabs">
+      <div class="tab" onclick="goTo('s-home')"><div class="tab-ic">🏠</div><div class="tab-lb">Home</div></div>
+      <div class="tab" onclick="goTo('s-review')"><div class="tab-ic">📋</div><div class="tab-lb">Report</div></div>
+      <div class="tab" onclick="goTo('s-chat')"><div class="tab-ic">💬</div><div class="tab-lb">Chat</div></div>
+      <div class="tab" onclick="goTo('s-dashboard')"><div class="tab-ic">📊</div><div class="tab-lb">Dash</div></div>
+      <div class="tab on" onclick="goTo('s-more')"><div class="tab-ic">⚙️</div><div class="tab-lb">More</div></div>
+    </div>
+  </div>
+
+  <!-- ===== BLOCKCHAIN ===== -->
+  <div class="screen off-right" id="s-blockchain">
+    <div class="sbar"><span>9:42</span><div class="sbar-r">📶&nbsp;🔋</div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">Blockchain Anchor</div></div></div></div>
+    <div class="scroll">
+      <div class="sc-title">Evidence Anchor</div>
+      <div class="sc-sub">Setiap laporan di-hash dan di-anchor ke blockchain Polygon. Bukti tidak bisa diubah — valid di pengadilan.</div>
+      <div class="code">
+        <div style="color:var(--gray2);font-size:10px;margin-bottom:4px">Tx Hash:</div>
+        <div style="word-break:break-all">0x9f3a2e8c1b4d7f92a305e6c8b1d4f7a0e2b5c8d1f4a7e0b3c6d9f2a5b8c1d4f7</div>
+        <div style="margin-top:10px;color:var(--teal3)">Block: #58,204,311<br>Network: Polygon PoS<br>Timestamp: 2026-05-02 09:14:22 UTC<br><span style="color:#4ade80;font-weight:700">Status: CONFIRMED ✓</span></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-family:var(--fw);font-weight:700;color:var(--navy)">Evidence terlampir</span><span class="chip chip-teal">3 files</span></div>
+        <div class="evi"><span class="evi-ic">📷</span><span class="evi-nm">Photo_ST2403.jpg</span><span class="evi-sz">IPFS pinned</span></div>
+        <div class="evi"><span class="evi-ic">🎙️</span><span class="evi-nm">Voice_ST2403.mp3</span><span class="evi-sz">Encrypted</span></div>
+        <div class="evi"><span class="evi-ic">📍</span><span class="evi-nm">Location_ST2403</span><span class="evi-sz">AIS verified</span></div>
+      </div>
+      <div class="card card-gap">
+        <div class="tl">
+          <div class="tlr"><div class="tlc"><div class="tld tld-on" style="width:24px;height:24px;font-size:10px">●</div><div class="tlln"></div></div><div class="tlbody"><h4>Report submitted</h4><p>02 May 2026 · 09:12 UTC</p></div></div>
+          <div class="tlr"><div class="tlc"><div class="tld tld-on" style="width:24px;height:24px;font-size:10px">●</div><div class="tlln"></div></div><div class="tlbody"><h4>Hash generated</h4><p>SHA-256 + IPFS CID</p></div></div>
+          <div class="tlr"><div class="tlc"><div class="tld tld-on" style="width:24px;height:24px;font-size:10px">●</div><div class="tlln"></div></div><div class="tlbody"><h4>Anchored to Polygon</h4><p>Block #58,204,311 · Confirmed</p></div></div>
+          <div class="tlr"><div class="tlc"><div class="tld tld-on" style="width:24px;height:24px;font-size:10px">●</div></div><div class="tlbody"><h4>MMEA notified</h4><p>Secure webhook · ST-2403</p></div></div>
+        </div>
+      </div>
+      <div class="pb-20"></div>
+    </div>
+    <div style="padding:0 0 28px"><button class="btn btn-teal" onclick="alert('Membuka Polygonscan...')">🔍 Verify on Polygonscan</button></div>
+    <div class="tabs">
+      <div class="tab" onclick="goTo('s-home')"><div class="tab-ic">🏠</div><div class="tab-lb">Home</div></div>
+      <div class="tab" onclick="goTo('s-review')"><div class="tab-ic">📋</div><div class="tab-lb">Report</div></div>
+      <div class="tab" onclick="goTo('s-chat')"><div class="tab-ic">💬</div><div class="tab-lb">Chat</div></div>
+      <div class="tab" onclick="goTo('s-dashboard')"><div class="tab-ic">📊</div><div class="tab-lb">Dash</div></div>
+      <div class="tab on" onclick="goTo('s-more')"><div class="tab-ic">⚙️</div><div class="tab-lb">More</div></div>
+    </div>
+  </div>
+
+  <!-- ===== ASEAN ===== -->
+  <div class="screen off-right" id="s-asean">
+    <div class="sbar"><span>9:42</span><div class="sbar-r">📶&nbsp;🔋</div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">ASEAN Mode</div></div></div></div>
+    <div class="scroll">
+      <div class="sc-title">ASEAN Cross-Border</div>
+      <div class="sc-sub">Laporan bisa diteruskan otomatis ke otoritas negara tetangga berdasarkan zona laut dan bendera kapal.</div>
+      <div class="card"><div style="font-family:var(--fw);font-weight:700;color:var(--navy);margin-bottom:8px">Jurisdiction aktif</div><div style="display:flex;flex-wrap:wrap"><span class="asean">🇲🇾 Malaysia — MMEA</span><span class="asean id">🇮🇩 Indonesia — BAKAMLA</span><span class="asean th">🇹🇭 Thailand — HTMS</span></div></div>
+      <div class="card card-gap">
+        <div style="font-family:var(--fw);font-weight:700;color:var(--navy);margin-bottom:10px">Routing logic</div>
+        <div class="tl">
+          <div class="tlr"><div class="tlc"><div class="tld tld-on" style="width:22px;height:22px;font-size:9px">●</div><div class="tlln"></div></div><div class="tlbody"><h4>Deteksi zona kapal</h4><p>AIS koordinat dicocokkan ke EEZ database.</p></div></div>
+          <div class="tlr"><div class="tlc"><div class="tld tld-on" style="width:22px;height:22px;font-size:9px">●</div><div class="tlln"></div></div><div class="tlbody"><h4>Pilih otoritas relevan</h4><p>Berdasarkan bendera kapal + zona kejadian.</p></div></div>
+          <div class="tlr"><div class="tlc"><div class="tld tld-on" style="width:22px;height:22px;font-size:9px">●</div><div class="tlln"></div></div><div class="tlbody"><h4>Forward laporan</h4><p>Encrypted webhook ke dashboard masing-masing negara.</p></div></div>
+          <div class="tlr"><div class="tlc"><div class="tld tld-cur" style="width:22px;height:22px;font-size:9px">●</div></div><div class="tlbody"><h4>Konfirmasi diterima</h4><p>Status tracking diperbarui real-time.</p></div></div>
+        </div>
+      </div>
+      <div class="card card-gap">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-family:var(--fw);font-weight:700;color:var(--navy)">Kasus aktif</span><span class="chip chip-teal">2 forwarded</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bg)"><div><div style="font-weight:700;font-family:var(--fw);font-size:13px;color:var(--navy)">ST-2401</div><div style="font-size:10px;color:var(--gray)">Malacca → MMEA + BAKAMLA</div></div><span class="chip chip-green">Sent</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0"><div><div style="font-weight:700;font-family:var(--fw);font-size:13px;color:var(--navy)">ST-2402</div><div style="font-size:10px;color:var(--gray)">Straits → HTMS Thailand</div></div><span class="chip chip-orange">Pending</span></div>
+      </div>
+      <div class="pb-20"></div>
+    </div>
+    <div style="padding:0 0 28px"><button class="btn btn-teal" onclick="alert('Menambahkan jurisdiksi baru...')">+ Add jurisdiction</button><button class="btn btn-outline" onclick="alert('Membuka routing map...')">View routing map</button></div>
+    <div class="tabs">
+      <div class="tab" onclick="goTo('s-home')"><div class="tab-ic">🏠</div><div class="tab-lb">Home</div></div>
+      <div class="tab" onclick="goTo('s-review')"><div class="tab-ic">📋</div><div class="tab-lb">Report</div></div>
+      <div class="tab" onclick="goTo('s-chat')"><div class="tab-ic">💬</div><div class="tab-lb">Chat</div></div>
+      <div class="tab" onclick="goTo('s-dashboard')"><div class="tab-ic">📊</div><div class="tab-lb">Dash</div></div>
+      <div class="tab on" onclick="goTo('s-more')"><div class="tab-ic">⚙️</div><div class="tab-lb">More</div></div>
+    </div>
+  </div>
+
+  <!-- ===== ESG SCORE ===== -->
+  <div class="screen off-right" id="s-esg">
+    <div class="sbar"><span>9:42</span><div class="sbar-r"><span class="online-tag">Live</span></div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">Vessel compliance</div></div></div></div>
+    <div class="scroll">
+      <div class="sc-title">ESG Vessel Score</div>
+      <div class="sc-sub">Skor kepatuhan publik per kapal — dapat diakses investor, bank, dan perusahaan asuransi. Terintegrasi dengan Bursa Malaysia reporting.</div>
+      <div class="card" style="text-align:center">
+        <div class="score-circle"><span>72</span></div>
+        <div style="font-family:var(--fw);font-size:15px;font-weight:800;color:var(--navy);margin-top:10px">MV Kencana Jaya</div>
+        <div style="font-size:11px;color:var(--gray);margin:2px 0 8px">IMO: 9812345 · Flag: Malaysia</div>
+        <div style="display:flex;gap:5px;justify-content:center"><span class="chip chip-teal">SDG 14</span><span class="chip chip-teal">SDG 8</span><span class="chip chip-teal">B+ Grade</span></div>
+      </div>
+      <div class="card card-gap">
+        <div style="font-family:var(--fw);font-weight:700;color:var(--navy);margin-bottom:12px">Breakdown skor</div>
+        <div style="font-size:12px;color:var(--gray);margin-bottom:3px">Environmental compliance</div><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="pbar" style="flex:1"><div class="pbar-fill pf-teal" style="width:80%"></div></div><span style="font-weight:800;color:var(--teal2);font-size:12px;min-width:22px">80</span></div>
+        <div style="font-size:12px;color:var(--gray);margin-bottom:3px">Crew welfare reports</div><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="pbar" style="flex:1"><div class="pbar-fill pf-teal" style="width:65%"></div></div><span style="font-weight:800;color:var(--teal2);font-size:12px;min-width:22px">65</span></div>
+        <div style="font-size:12px;color:var(--gray);margin-bottom:3px">IUU fishing incidents</div><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="pbar" style="flex:1"><div class="pbar-fill pf-red" style="width:30%"></div></div><span style="font-weight:800;color:#dc2626;font-size:12px;min-width:22px">30</span></div>
+        <div style="font-size:12px;color:var(--gray);margin-bottom:3px">Blockchain evidence ratio</div><div style="display:flex;align-items:center;gap:8px"><div class="pbar" style="flex:1"><div class="pbar-fill pf-teal" style="width:92%"></div></div><span style="font-weight:800;color:var(--teal2);font-size:12px;min-width:22px">92</span></div>
+      </div>
+      <div class="card card-gap">
+        <div style="font-family:var(--fw);font-weight:700;color:var(--navy);margin-bottom:8px">Akses publik oleh</div>
+        <div class="crow"><span>🏦 Bank Negara</span><span class="chip chip-teal">Subscribed</span></div>
+        <div class="crow"><span>📈 Bursa Malaysia</span><span class="chip chip-green">ESG linked</span></div>
+        <div class="crow"><span>🛡️ Marine Insurer</span><span class="chip chip-orange">Pending</span></div>
+      </div>
+      <div class="pb-20"></div>
+    </div>
+    <div style="padding:0 0 28px"><button class="btn btn-teal" onclick="alert('Mengekspor ESG Report PDF...')">📤 Export ESG Report</button><button class="btn btn-outline" onclick="goTo('s-compare')">🔍 Compare vessels</button></div>
+    <div class="tabs">
+      <div class="tab" onclick="goTo('s-home')"><div class="tab-ic">🏠</div><div class="tab-lb">Home</div></div>
+      <div class="tab" onclick="goTo('s-review')"><div class="tab-ic">📋</div><div class="tab-lb">Report</div></div>
+      <div class="tab" onclick="goTo('s-chat')"><div class="tab-ic">💬</div><div class="tab-lb">Chat</div></div>
+      <div class="tab" onclick="goTo('s-dashboard')"><div class="tab-ic">📊</div><div class="tab-lb">Dash</div></div>
+      <div class="tab on" onclick="goTo('s-more')"><div class="tab-ic">⚙️</div><div class="tab-lb">More</div></div>
+    </div>
+  </div>
+
+  <!-- ===== WELLNESS ===== -->
+  <div class="screen off-right" id="s-wellness">
+    <div class="sbar"><span>9:42</span><div class="sbar-r"><span class="anon-tag">Anonymous</span></div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">Wellness monitoring</div></div></div></div>
+    <div class="scroll">
+      <div class="sc-title">Crew Pulse</div>
+      <div class="sc-sub">AI secara pasif memantau pola bicara dan frekuensi suara untuk mendeteksi tanda burnout, depresi, atau tekanan psikologis — tanpa bertanya langsung.</div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Crew Wellness Score</div>
+        <div style="font-family:var(--fw);font-size:54px;font-weight:900;color:var(--teal);line-height:1">78</div>
+        <div style="font-size:12px;color:var(--gray);margin:3px 0 8px">/ 100 · Anonymous</div>
+        <div class="wbar"><div class="wbar-fill" style="width:78%"></div></div>
+        <div style="display:flex;gap:6px;justify-content:center;margin-top:8px"><span class="chip chip-green">Good</span><span class="chip chip-teal">AI monitored</span></div>
+      </div>
+      <div class="card card-gap">
+        <div style="font-family:var(--fw);font-weight:700;color:var(--navy);margin-bottom:8px">Indikator aktif</div>
+        <div class="crow"><div><div style="font-weight:700;color:var(--navy);font-family:var(--fw);font-size:13px">Burnout risk</div><div style="font-size:10px;color:var(--gray)">Pola bicara dianalisis</div></div><span class="chip chip-green">Low</span></div>
+        <div class="crow"><div><div style="font-weight:700;color:var(--navy);font-family:var(--fw);font-size:13px">Stress level</div><div style="font-size:10px;color:var(--gray)">Frekuensi suara</div></div><span class="chip chip-orange">Moderate</span></div>
+        <div class="crow"><div><div style="font-weight:700;color:var(--navy);font-family:var(--fw);font-size:13px">Sleep fatigue</div><div style="font-size:10px;color:var(--gray)">Waktu &amp; pola laporan</div></div><span class="chip chip-orange">Watch</span></div>
+        <div class="crow"><div><div style="font-weight:700;color:var(--navy);font-family:var(--fw);font-size:13px">Psychological safety</div><div style="font-size:10px;color:var(--gray)">Sentimen laporan</div></div><span class="chip chip-green">Good</span></div>
+      </div>
+      <div class="card card-gap">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-family:var(--fw);font-weight:700;color:var(--navy)">Laporan docking</span><span class="chip chip-green">Ready</span></div>
+        <div style="font-size:11px;color:var(--gray);line-height:1.5">Laporan anonim siap dikirim ke dokter pelabuhan / NGO saat docking. Identitas tidak akan terungkap.</div>
+      </div>
+      <div class="pb-20"></div>
+    </div>
+    <div style="padding:0 0 28px"><button class="btn btn-teal" onclick="alert('Menampilkan preview laporan anonim...')">Preview laporan anonim</button><button class="btn btn-outline" onclick="goTo('s-ngo')">Kirim ke NGO / Dokter</button></div>
+    <div class="tabs">
+      <div class="tab" onclick="goTo('s-home')"><div class="tab-ic">🏠</div><div class="tab-lb">Home</div></div>
+      <div class="tab" onclick="goTo('s-review')"><div class="tab-ic">📋</div><div class="tab-lb">Report</div></div>
+      <div class="tab" onclick="goTo('s-chat')"><div class="tab-ic">💬</div><div class="tab-lb">Chat</div></div>
+      <div class="tab" onclick="goTo('s-dashboard')"><div class="tab-ic">📊</div><div class="tab-lb">Dash</div></div>
+      <div class="tab on" onclick="goTo('s-more')"><div class="tab-ic">⚙️</div><div class="tab-lb">More</div></div>
+    </div>
+  </div>
+
+  <!-- ===== COMPARE VESSELS ===== -->
+  <div class="screen off-right" id="s-compare">
+    <div class="sbar"><span>9:42</span><div class="sbar-r"><span class="online-tag">Live</span></div></div>
+    <div class="tnav"><button class="back-btn" onclick="goBack()">←</button><div class="nav-brand"><svg class="nav-logo" viewBox="0 0 40 46" fill="none"><path d="M20 2L36 8V22C36 31.5 29 39.5 20 43C11 39.5 4 31.5 4 22V8L20 2Z" fill="#00c9a7"/><path d="M14 24C14 18 17 14 20 12C23 14 26 18 26 24C26 28 23.5 31.5 20 33C16.5 31.5 14 28 14 24Z" fill="white" opacity=".9"/></svg><div><div class="brand-name">SafeTide</div><div class="brand-sub">ESG benchmark</div></div></div></div>
+    <div class="scroll">
+      <div class="sc-title">Compare Vessels</div>
+      <div class="sc-sub">Bandingkan skor ESG antar kapal dalam satu perusahaan atau lintas operator di zona ASEAN.</div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span style="font-family:var(--fw);font-weight:700;color:var(--navy)">Kapal dibandingkan</span><span class="chip chip-teal">3 vessels</span></div>
+        <div style="background:var(--teal-light);border-radius:12px;padding:12px;margin-bottom:8px;border:2px solid var(--teal)"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:800;font-family:var(--fw);color:var(--navy);font-size:13px">MV Kencana Jaya</div><div style="font-size:10px;color:var(--gray)">IMO 9812345 · MY</div></div><span style="font-family:var(--fw);font-size:20px;font-weight:900;color:var(--teal2)">72</span></div><div class="pbar" style="margin-top:6px"><div class="pbar-fill pf-teal" style="width:72%"></div></div></div>
+        <div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:800;font-family:var(--fw);color:var(--navy);font-size:13px">MV Samudera II</div><div style="font-size:10px;color:var(--gray)">IMO 9654321 · ID</div></div><span style="font-family:var(--fw);font-size:20px;font-weight:900;color:#f59e0b">58</span></div><div class="pbar" style="margin-top:6px"><div class="pbar-fill pf-orange" style="width:58%"></div></div></div>
+        <div style="background:var(--bg);border-radius:12px;padding:12px"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:800;font-family:var(--fw);color:var(--navy);font-size:13px">MV Andaman Star</div><div style="font-size:10px;color:var(--gray)">IMO 9901122 · TH</div></div><span style="font-family:var(--fw);font-size:20px;font-weight:900;color:var(--teal2)">85</span></div><div class="pbar" style="margin-top:6px"><div class="pbar-fill pf-teal" style="width:85%"></div></div></div>
+      </div>
+      <div class="card card-gap">
+        <div style="font-family:var(--fw);font-weight:700;color:var(--navy);margin-bottom:8px">Detail perbandingan</div>
+        <div style="overflow-x:auto"><table style="width:100%;font-size:11px;border-collapse:collapse"><tr style="color:var(--gray);font-weight:600"><td style="padding:5px 4px">Kategori</td><td style="padding:5px;text-align:center;color:var(--teal2)">Kencana</td><td style="padding:5px;text-align:center;color:#f59e0b">Samudera</td><td style="padding:5px;text-align:center;color:var(--teal2)">Andaman</td></tr><tr style="border-top:1px solid var(--bg)"><td style="padding:5px 4px;color:var(--gray)">Environment</td><td style="padding:5px;text-align:center;font-weight:800;color:var(--teal2)">80</td><td style="padding:5px;text-align:center;font-weight:800;color:#f59e0b">60</td><td style="padding:5px;text-align:center;font-weight:800;color:var(--teal2)">90</td></tr><tr style="border-top:1px solid var(--bg)"><td style="padding:5px 4px;color:var(--gray)">Crew welfare</td><td style="padding:5px;text-align:center;font-weight:800;color:var(--teal2)">65</td><td style="padding:5px;text-align:center;font-weight:800;color:#dc2626">42</td><td style="padding:5px;text-align:center;font-weight:800;color:var(--teal2)">78</td></tr><tr style="border-top:1px solid var(--bg)"><td style="padding:5px 4px;color:var(--gray)">IUU fishing</td><td style="padding:5px;text-align:center;font-weight:800;color:#dc2626">30</td><td style="padding:5px;text-align:center;font-weight:800;color:#dc2626">55</td><td style="padding:5px;text-align:center;font-weight:800;color:var(--teal2)">82</td></tr><tr style="border-top:1px solid var(--bg)"><td style="padding:5px 4px;color:var(--gray)">Blockchain</td><td style="padding:5px;text-align:center;font-weight:800;color:var(--teal2)">92</td><td style="padding:5px;text-align:center;font-weight:800;color:#f59e0b">68</td><td style="padding:5px;text-align:center;font-weight:800;color:var(--teal2)">88</td></tr></table></div>
+      </div>
+      <div class="pb-20"></div>
+    </div>
+    <div style="padding:0 0 28px"><button class="btn btn-teal" onclick="alert('Mengekspor PDF perbandingan...')">📤 Export Perbandingan PDF</button><button class="btn btn-outline" onclick="alert('Tambah kapal...')">+ Tambah Kapal lain</button></div>
+    <div class="tabs">
+      <div class="tab" onclick="goTo('s-home')"><div class="tab-ic">🏠</div><div class="tab-lb">Home</div></div>
+      <div class="tab" onclick="goTo('s-review')"><div class="tab-ic">📋</div><div class="tab-lb">Report</div></div>
+      <div class="tab" onclick="goTo('s-chat')"><div class="tab-ic">💬</div><div class="tab-lb">Chat</div></div>
+      <div class="tab" onclick="goTo('s-dashboard')"><div class="tab-ic">📊</div><div class="tab-lb">Dash</div></div>
+      <div class="tab on" onclick="goTo('s-more')"><div class="tab-ic">⚙️</div><div class="tab-lb">More</div></div>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<!-- BOTTOM IReX BAR -->
+<div class="irex-bar">
+  <div class="irex-left" id="screen-indicator">🟢 Splash · 20 layar terhubung</div>
+  <div class="irex-right">🏆 87% Menang IReX 2026</div>
+</div>
+
+<script>
+let cur='s-splash', hist=[];
+const labels={
+  's-splash':'Splash','s-welcome':'Welcome','s-home':'Crew Home',
+  's-mode':'Mode Select','s-voice':'Voice Report','s-chat':'Chat AI',
+  's-review':'Review & Submit','s-tracking':'Tracking','s-rewards':'Rewards',
+  's-help':'Need Help','s-ngo':'Trusted NGO','s-guide':'Quick Guide',
+  's-silent':'Silent Mode','s-dashboard':'MMEA Dashboard','s-more':'More',
+  's-witness':'Witness Network','s-legal':'AI Legal Brief',
+  's-blockchain':'Blockchain Anchor','s-asean':'ASEAN Mode',
+  's-esg':'ESG Score','s-wellness':'Crew Pulse','s-compare':'Compare Vessels'
+};
+
+function goTo(id){
+  if(id===cur)return;
+  const prev=document.getElementById(cur);
+  const next=document.getElementById(id);
+  if(!prev||!next)return;
+  hist.push(cur);
+  prev.classList.remove('active'); prev.classList.add('exit-l');
+  next.classList.remove('off-right','off-left','exit-l','exit-r');
+  next.classList.add('active');
+  setTimeout(()=>{ prev.classList.remove('exit-l','active'); },320);
+  cur=id;
+  document.getElementById('screen-indicator').textContent =
+    '🟢 '+( labels[id]||id )+' · 20 layar';
+  if(id==='s-chat') setTimeout(startChat,400);
+}
+
+function goBack(){
+  if(!hist.length)return;
+  const prev=hist.pop();
+  const c=document.getElementById(cur);
+  const t=document.getElementById(prev);
+  if(!c||!t)return;
+  c.classList.remove('active'); c.classList.add('exit-r');
+  t.classList.remove('off-right','off-left','exit-l','exit-r');
+  t.classList.add('active');
+  setTimeout(()=>{ c.classList.remove('exit-r','active'); },320);
+  cur=prev;
+  document.getElementById('screen-indicator').textContent =
+    '🟢 '+(labels[prev]||prev)+' · 20 layar';
+}
+
+// Auto splash
+setTimeout(()=>goTo('s-welcome'),2500);
+
+// Mode select
+function selMode(m){
+  const a=document.getElementById('card-anon');
+  const v=document.getElementById('card-veri');
+  a.style.border=m==='anon'?'2px solid var(--teal)':'2px solid transparent';
+  v.style.border=m==='veri'?'2px solid var(--navy)':'2px solid transparent';
+}
+
+// Voice
+let vrec=false,vrInt=null,vrSec=0;
+function toggleVoice(){
+  vrec=!vrec;
+  const w=document.getElementById('wf');
+  const t=document.getElementById('vtimer');
+  const b=document.getElementById('mic-btn');
+  if(vrec){
+    w.classList.remove('pause');
+    b.textContent='⏹️'; b.style.background='#ef4444';
+    vrInt=setInterval(()=>{
+      vrSec++;
+      const m=String(Math.floor(vrSec/60)).padStart(2,'0');
+      const s=String(vrSec%60).padStart(2,'0');
+      t.textContent=m+':'+s+' / 01:00';
+      if(vrSec>=60) toggleVoice();
+    },1000);
+  } else {
+    w.classList.add('pause');
+    b.textContent='🎙️'; b.style.background='var(--teal)';
+    clearInterval(vrInt);
+  }
+}
+
+// Toggle switch
+function togSwitch(el){
+  el.classList.toggle('on'); el.classList.toggle('off');
+}
+
+// Submit
+function doSubmit(){
+  const b=document.getElementById('submit-btn');
+  b.textContent='⏳ Mengenkripsi...'; b.disabled=true;
+  setTimeout(()=>b.textContent='⛓️ Anchoring ke Polygon...',800);
+  setTimeout(()=>goTo('s-tracking'),2000);
+}
+
+// Chat
+const cMsgs=[
+  {r:'u',t:'Saya takut kapten tahu kalau saya melapor.'},
+  {r:'a',t:'Saya mendengar kamu. Kamu tidak sendirian 🤗 Laporan ini bisa dikirim anonim penuh. Apakah kamu mau kirim voice note atau foto sebagai bukti?'},
+  {r:'u',t:'Iya, ada foto. Tapi sinyal mati.'},
+  {r:'a',t:'Tidak masalah ✅ SafeTide berjalan full offline. Foto tersimpan aman dan dikirim otomatis saat docking. Kamu siap lanjutkan?'}
+];
+let chatInit=false;
+function startChat(){
+  if(chatInit)return; chatInit=true;
+  cMsgs.forEach((m,i)=>{
+    setTimeout(()=>{
+      if(m.r==='a'){const t=addTyping();setTimeout(()=>{t.remove();addBub('ai',m.t)},900)}
+      else addBub('me',m.t);
+    },i*1800+400);
+  });
+}
+function addBub(cls,txt){
+  const a=document.getElementById('chatArea');
+  const row=document.createElement('div');
+  row.className='mrow'+(cls==='me'?' usr':'');
+  row.innerHTML=cls==='ai'
+    ?`<div class="mavt">🌊</div><div><div class="bubble ai">${txt}</div></div>`
+    :`<div class="mavt u">👤</div><div><div class="bubble me">${txt}</div></div>`;
+  a.appendChild(row); a.scrollTop=a.scrollHeight;
+}
+function addTyping(){
+  const a=document.getElementById('chatArea');
+  const row=document.createElement('div');row.className='mrow';
+  row.innerHTML=`<div class="mavt">🌊</div><div><div class="bubble ai"><span class="typing"><span></span><span></span><span></span></span></div></div>`;
+  a.appendChild(row); a.scrollTop=a.scrollHeight; return row;
+}
+function sndMsg(){
+  const inp=document.getElementById('ci');
+  const txt=inp.value.trim(); if(!txt)return;
+  addBub('me',txt); inp.value='';
+  setTimeout(()=>{
+    const t=addTyping();
+    setTimeout(()=>{
+      t.remove();
+      const r=['Saya memahami situasimu 💙 Buktimu akan dilindungi sepenuhnya.',
+               'Terima kasih sudah mempercayai SafeTide! Laporan ini sudah aman.',
+               'Baik, aku bantu kamu. Ada detail tambahan yang ingin ditambahkan?',
+               'SafeTide akan memastikan laporanmu sampai ke tangan yang tepat dengan aman 🛡️'];
+      addBub('ai',r[Math.floor(Math.random()*r.length)]);
+    },1000);
+  },350);
+}
+</script>
+</body>
+</html>
