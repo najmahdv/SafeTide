@@ -8,8 +8,6 @@
 
 [![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-GitHub%20Pages-14b8a6?style=for-the-badge)](https://najmahayett.github.io/safetide-portfolio)
 [![Figma](https://img.shields.io/badge/🎨%20Figma-Prototype-14b8a6?style=for-the-badge&logo=figma)](https://www.figma.com/proto/...)
-[![SafeTide Awal](https://img.shields.io/badge/🎥%20Pitch%20Video-YouTube-FF0000?style=for-the-badge&logo=youtube)]((https://www.instagram.com/reel/DXCda2mMcW4/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==))
-[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
 ---
 
